@@ -53,22 +53,4 @@ public class ExecutorService extends BaseObservableThreadPoolServiceService {
       }
     }
   }
-
-  private static class MyRunnable implements Runnable {
-    private final int i;
-
-    public MyRunnable(int i) {
-      this.i = i;
-    }
-
-    @Override
-    public void run() {
-      ALog.e(i + " Task");
-      try {
-        Thread.sleep(3000);
-      } catch (InterruptedException e) {
-        ALog.e(e);
-      }
-    }
-  }
 }
