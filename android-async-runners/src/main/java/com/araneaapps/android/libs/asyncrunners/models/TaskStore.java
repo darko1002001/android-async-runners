@@ -59,17 +59,17 @@ public class TaskStore {
   /*
    * Use this in the Application class to wire the singleton to the Application Classloader
    */
-  public static void init(Context context){
+  public static void init(Context context) {
     if (instance == null) {
       instance = new TaskStore(context.getApplicationContext());
     }
   }
-  
+
   public static void setExecutorClass(final Class<?> executorServiceClass) {
     TaskStore.executorServiceClass = executorServiceClass;
   }
 
-  private void addTask(final TaskDecorator task) {
+  public void addTask(final TaskDecorator task) {
     queue.add(task);
   }
 
@@ -77,11 +77,11 @@ public class TaskStore {
     queue.remove(task);
   }
 
-  public TaskDecorator poll(){
+  public TaskDecorator poll() {
     return queue.poll();
   }
 
-  public TaskDecorator peek(){
+  public TaskDecorator peek() {
     return queue.peek();
   }
 

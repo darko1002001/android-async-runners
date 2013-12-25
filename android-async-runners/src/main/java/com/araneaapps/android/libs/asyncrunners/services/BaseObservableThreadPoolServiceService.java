@@ -30,13 +30,13 @@ package com.araneaapps.android.libs.asyncrunners.services;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import com.araneaapps.android.libs.asyncrunners.enums.DownloadPriority;
 import com.araneaapps.android.libs.logger.ALog;
 
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
-/** @author darko.grozdanovski */
+/**
+ * @author darko.grozdanovski
+ */
 public abstract class BaseObservableThreadPoolServiceService extends
     BaseThreadPoolService {
 
@@ -82,27 +82,21 @@ public abstract class BaseObservableThreadPoolServiceService extends
 
   /**
    * Used to submit prioritized tasks to the Queue for the file download
-   * 
+   *
    * @author darko.grozdanovski
    */
-  public class WorkerThread extends FutureTask implements WorkerPriority {
+  public class WorkerThread implements Runnable {
 
-    private final DownloadPriority downloadPriority;
-    public WorkerThread(final DownloadPriority downloadPriority, final Runnable runnable) {
-      super(runnable, true);
-      this.downloadPriority = downloadPriority;
-    }
+    private Runnable runnable;
 
-    /** @return the priority */
-    @Override
-    public DownloadPriority getPriority() {
-      return downloadPriority;
+    public WorkerThread(final Runnable runnable) {
+      this.runnable = runnable;
     }
 
     @Override
     public void run() {
       observer.registerRunnable(this);
-      super.run();
+      runnable.run();
       observer.unregisterRunnable(this);
     }
   }

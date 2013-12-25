@@ -22,44 +22,30 @@
  * THE SOFTWARE.
  */
 
-/**
- *
- */
-package com.araneaapps.android.libs.asyncrunners.services;
+package com.example.asyncrunners;
 
 import com.araneaapps.android.libs.logger.ALog;
 
-import java.util.LinkedList;
+public class MyRunnable implements Runnable {
+  private final int i;
 
-/**
- * @author darko.grozdanovski
- */
-public abstract class ThreadCountObserver {
-
-  public static final String TAG = ThreadCountObserver.class.getSimpleName();
-
-  public abstract void onThreadsFinished();
-
-  public abstract void newRunnableRegistered();
-
-  LinkedList<Runnable> observerList = new LinkedList<Runnable>();
-
-  public void registerRunnable(final Runnable r) {
-    synchronized (observerList) {
-      observerList.add(r);
-    }
-    newRunnableRegistered();
-    ALog.d(TAG, "observer list size on register: " + observerList.size());
+  public MyRunnable(int i) {
+    this.i = i;
   }
 
-  public void unregisterRunnable(final Runnable r) {
-    synchronized (observerList) {
-      observerList.remove(r);
+  @Override
+  public void run() {
+
+    ALog.e("Task " + i);
+    try {
+      Thread.sleep(3000);
+    } catch (InterruptedException e) {
     }
-    ALog.d(TAG, "observer list size on unregister: " + observerList.size());
-    if (observerList.size() == 0) {
-      ALog.d(TAG, "observer calling finish method");
-      onThreadsFinished();
-    }
+
+  }
+
+  @Override
+  public String toString() {
+    return "Order " + this.i;
   }
 }

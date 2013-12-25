@@ -35,21 +35,40 @@ public class ExecutorService extends BaseObservableThreadPoolServiceService {
   @Override
   public void handleIntent(Intent intent) {
     TaskStore taskStore = TaskStore.get(getApplicationContext());
+    while (taskStore.hasTasks()) {
       TaskDecorator task = taskStore.poll();
       if (task == null) {
         ALog.d(TAG, TaskDecorator.class.getSimpleName() + " is null");
-        return;
+        continue;
       }
       RequestOptions options = task.getOptions();
-      WorkerThread worker = new WorkerThread(options.getPriority(), task.getRunnable());
-      ALog.d("Pool id " + task.getRunnable().toString());
+      WorkerThread worker = new WorkerThread(task.getRunnable());
       if (options.shouldRunInSingleThread() == false) {
-        getFixedSizePoolExecutor().execute(
-            worker);
+        getFixedSizePoolExecutor().submit(
+            worker, options.getPriority().ordinal());
       } else {
         // Handle according to options
-        getSingleThreadExecutorService().execute(
-            worker);
+        getSingleThreadExecutorService().submit(
+            worker,options.getPriority().ordinal());
       }
     }
+  }
+
+  private static class MyRunnable implements Runnable {
+    private final int i;
+
+    public MyRunnable(int i) {
+      this.i = i;
+    }
+
+    @Override
+    public void run() {
+      ALog.e(i + " Task");
+      try {
+        Thread.sleep(3000);
+      } catch (InterruptedException e) {
+        ALog.e(e);
+      }
+    }
+  }
 }

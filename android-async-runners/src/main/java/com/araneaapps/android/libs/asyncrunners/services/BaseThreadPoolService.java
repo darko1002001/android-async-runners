@@ -30,24 +30,24 @@ package com.araneaapps.android.libs.asyncrunners.services;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import com.araneaapps.android.libs.asyncrunners.enums.DownloadPriority;
 
-import java.util.Comparator;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
-/** @author darko.grozdanovski */
+/**
+ * @author darko.grozdanovski
+ */
 public abstract class BaseThreadPoolService extends Service {
 
-  /** the number of objects that will be executed simultaniously */
+  /**
+   * the number of objects that will be executed simultaniously
+   */
   private static final int CORE_POOL_SIZE = 3;
 
   public static final String TAG = BaseThreadPoolService.class.getSimpleName();
 
-  private ExecutorService fixedSizePoolExecutor;
-  private ExecutorService singleThreadExecutorService;
+  private PriorityExecutor fixedSizePoolExecutor;
+  private PriorityExecutor singleThreadExecutorService;
 
   @Override
   public void onDestroy() {
@@ -55,7 +55,7 @@ public abstract class BaseThreadPoolService extends Service {
     safelyShutdownService(singleThreadExecutorService);
   }
 
-  private void safelyShutdownService(ExecutorService service) {
+  private void safelyShutdownService(ThreadPoolExecutor service) {
     try {
       service.shutdown();
     } catch (Exception e) {
@@ -71,20 +71,8 @@ public abstract class BaseThreadPoolService extends Service {
   @Override
   public void onCreate() {
     super.onCreate();
-    @SuppressWarnings("unchecked")
-    final PriorityBlockingQueue<Runnable> queue = new PriorityBlockingQueue<Runnable>(10,
-        new ComparePriority());
-    fixedSizePoolExecutor = new ThreadPoolExecutor(getCorePoolSize(),
-        getCorePoolSize(),
-        50L,
-        TimeUnit.SECONDS,
-        queue);
-
-    @SuppressWarnings("unchecked")
-    final PriorityBlockingQueue<Runnable> singleThreadQueue = new PriorityBlockingQueue<Runnable>(
-        10, new ComparePriority());
-    singleThreadExecutorService = new ThreadPoolExecutor(1, 1, 50L, TimeUnit.SECONDS,
-        singleThreadQueue);
+    fixedSizePoolExecutor = PriorityExecutor.newFixedThreadPool(getCorePoolSize());
+    singleThreadExecutorService = PriorityExecutor.newFixedThreadPool(1);
   }
 
   @Override
@@ -103,34 +91,71 @@ public abstract class BaseThreadPoolService extends Service {
     return CORE_POOL_SIZE;
   }
 
-  public ExecutorService getFixedSizePoolExecutor() {
+  public PriorityExecutor getFixedSizePoolExecutor() {
     return fixedSizePoolExecutor;
   }
 
-  public ExecutorService getSingleThreadExecutorService() {
+  public PriorityExecutor getSingleThreadExecutorService() {
     return singleThreadExecutorService;
   }
 
-  /**
-   * @author darko.grozdanovski
-   * @param <T>
-   */
-  private static class ComparePriority<T extends WorkerPriority> implements Comparator<T> {
+
+  static class PriorityExecutor extends ThreadPoolExecutor {
+
+    public PriorityExecutor(int corePoolSize, int maximumPoolSize,
+                            long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
+      super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
+    }
+    //Utitlity method to create thread pool easily
+
+    public static PriorityExecutor newFixedThreadPool(int nThreads) {
+      return new PriorityExecutor(nThreads, nThreads, 60L,
+          TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>());
+    }
+    //Submit with New comparable task
+
+    public Future<?> submit(Runnable task, int priority) {
+      return super.submit(new ComparableFutureTask(task, null, priority));
+    }
+    //execute with New comparable task
+
+    public void execute(Runnable command, int priority) {
+      super.execute(new ComparableFutureTask(command, null, priority));
+    }
 
     @Override
-    public int compare(final T o1, final T o2) {
-      return Integer.valueOf((o1.getPriority().ordinal())).compareTo(
-          Integer.valueOf(o2.getPriority().ordinal()));
+    protected <T> RunnableFuture<T> newTaskFor(Callable<T> callable) {
+      return (RunnableFuture<T>) callable;
+    }
+
+    @Override
+    protected <T> RunnableFuture<T> newTaskFor(Runnable runnable, T value) {
+      return (RunnableFuture<T>) runnable;
     }
   }
 
-  /**
-   * Implement in the worker to be able to prioritize the execution
-   * 
-   * @author darko.grozdanovski
-   */
-  public interface WorkerPriority {
+  static class ComparableFutureTask<T> extends FutureTask<T> implements Comparable<ComparableFutureTask<T>> {
 
-    public DownloadPriority getPriority();
+    volatile int priority = 0;
+    static final AtomicLong seq = new AtomicLong(0);
+    final long seqNum;
+
+    public ComparableFutureTask(Runnable runnable, T result, int priority) {
+      super(runnable, result);
+      this.priority = priority;
+      seqNum = seq.getAndIncrement();
+    }
+
+    public ComparableFutureTask(Callable<T> callable, int priority) {
+      super(callable);
+      this.priority = priority;
+      seqNum = seq.getAndIncrement();
+    }
+
+    @Override
+    public int compareTo(ComparableFutureTask<T> o) {
+      return o.priority > priority ? 1 : (o.priority < priority ? -1 :
+          (seqNum > o.seqNum ? 1 : (seqNum < o.seqNum ? -1 : 0)));
+    }
   }
 }

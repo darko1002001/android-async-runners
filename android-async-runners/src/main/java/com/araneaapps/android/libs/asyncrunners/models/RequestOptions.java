@@ -39,17 +39,8 @@ public class RequestOptions {
   public boolean shouldRunInSingleThread() {
     return runInSingleThread;
   }
-
-  public void setRunInSingleThread(boolean runInSingleThread) {
-    this.runInSingleThread = runInSingleThread;
-  }
-
   public DownloadPriority getPriority() {
     return priority;
-  }
-
-  public void setPriority(DownloadPriority priority) {
-    this.priority = priority;
   }
 
   public static class RequestOptionsBuilder {
