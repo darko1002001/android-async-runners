@@ -33,6 +33,7 @@ import android.os.IBinder;
 import com.araneaapps.android.libs.asyncrunners.enums.DownloadPriority;
 import com.araneaapps.android.libs.logger.ALog;
 
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 /** @author darko.grozdanovski */
@@ -84,15 +85,12 @@ public abstract class BaseObservableThreadPoolServiceService extends
    * 
    * @author darko.grozdanovski
    */
-  class WorkerThread implements Runnable, WorkerPriority {
+  public class WorkerThread extends FutureTask implements WorkerPriority {
 
     private final DownloadPriority downloadPriority;
-    private final Runnable executable;
-
-    public WorkerThread(final DownloadPriority downloadPriority, final Runnable executable) {
-      super();
+    public WorkerThread(final DownloadPriority downloadPriority, final Runnable runnable) {
+      super(runnable, true);
       this.downloadPriority = downloadPriority;
-      this.executable = executable;
     }
 
     /** @return the priority */
@@ -104,7 +102,7 @@ public abstract class BaseObservableThreadPoolServiceService extends
     @Override
     public void run() {
       observer.registerRunnable(this);
-      executable.run();
+      super.run();
       observer.unregisterRunnable(this);
     }
   }
