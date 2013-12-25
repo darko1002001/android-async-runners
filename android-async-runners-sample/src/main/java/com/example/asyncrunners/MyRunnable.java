@@ -35,11 +35,11 @@ public class MyRunnable implements Runnable {
 
   @Override
   public void run() {
-
     ALog.e("Task " + i);
     try {
       Thread.sleep(3000);
     } catch (InterruptedException e) {
+      ALog.v(e.getMessage());
     }
 
   }

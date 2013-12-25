@@ -28,6 +28,9 @@ import android.content.Context;
 
 public class AsyncRunners {
 
+  private AsyncRunners() {
+  }
+
   public static void init(Context context) {
     TaskStore.init(context);
   }

@@ -39,6 +39,7 @@ public class RequestOptions {
   public boolean shouldRunInSingleThread() {
     return runInSingleThread;
   }
+
   public DownloadPriority getPriority() {
     return priority;
   }

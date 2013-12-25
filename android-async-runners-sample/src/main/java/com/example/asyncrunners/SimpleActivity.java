@@ -12,13 +12,13 @@ public class SimpleActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.simple_activity);
 
-   for(int i= 1; i< 10; i++){
+    for (int i = 1; i < 10; i++) {
       TaskStore.get(this).queue(new MyRunnable(i), new RequestOptions.RequestOptionsBuilder().
           setPriority(DownloadPriority.NORMAL).
           setRunInSingleThread(true).build());
     }
 
-    for(int i= 10; i< 20; i++ ){
+    for (int i = 10; i < 20; i++) {
       TaskStore.get(this).queue(new MyRunnable(i), new RequestOptions.RequestOptionsBuilder().
           setPriority(DownloadPriority.CRITICAL).
           setRunInSingleThread(true).build());

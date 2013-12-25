@@ -46,13 +46,13 @@ public class ExecutorService extends BaseObservableThreadPoolServiceService {
       RequestOptions options = task.getOptions();
       WorkerThread worker = new WorkerThread(task.getRunnable());
       Future<?> future;
-      if (options.shouldRunInSingleThread() == false) {
-         future = getFixedSizePoolExecutor().submit(
-            worker, options.getPriority().ordinal());
-      } else {
-        // Handle according to options
+      if (options.shouldRunInSingleThread()) {
         future = getSingleThreadExecutorService().submit(
-            worker,options.getPriority().ordinal());
+            worker, options.getPriority().ordinal());
+
+      } else {
+        future = getFixedSizePoolExecutor().submit(
+            worker, options.getPriority().ordinal());
       }
       task.setFuture(future);
     }

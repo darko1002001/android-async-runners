@@ -30,8 +30,16 @@ package com.araneaapps.android.libs.asyncrunners.services;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import com.araneaapps.android.libs.logger.ALog;
 
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -59,6 +67,7 @@ public abstract class BaseThreadPoolService extends Service {
     try {
       service.shutdown();
     } catch (Exception e) {
+      ALog.v(e.getMessage());
     }
   }
 
@@ -134,28 +143,31 @@ public abstract class BaseThreadPoolService extends Service {
     }
   }
 
-  static class ComparableFutureTask<T> extends FutureTask<T> implements Comparable<ComparableFutureTask<T>> {
+  static class ComparableFutureTask<T> extends FutureTask<T>
+      implements Comparable<ComparableFutureTask<T>> {
 
     volatile int priority = 0;
-    static final AtomicLong seq = new AtomicLong(0);
-    final long seqNum;
+    static final AtomicLong SEQUENCE_GENERATOR = new AtomicLong(0);
+    final long sequenceNumber;
 
     public ComparableFutureTask(Runnable runnable, T result, int priority) {
       super(runnable, result);
       this.priority = priority;
-      seqNum = seq.getAndIncrement();
+      sequenceNumber = SEQUENCE_GENERATOR.getAndIncrement();
     }
 
     public ComparableFutureTask(Callable<T> callable, int priority) {
       super(callable);
       this.priority = priority;
-      seqNum = seq.getAndIncrement();
+      sequenceNumber = SEQUENCE_GENERATOR.getAndIncrement();
     }
 
     @Override
     public int compareTo(ComparableFutureTask<T> o) {
-      return o.priority > priority ? 1 : (o.priority < priority ? -1 :
-          (seqNum > o.seqNum ? 1 : (seqNum < o.seqNum ? -1 : 0)));
+      return o.priority > priority ? 1
+          : (o.priority < priority ? -1
+          : (sequenceNumber > o.sequenceNumber ? 1
+          : (sequenceNumber < o.sequenceNumber ? -1 : 0)));
     }
   }
 }
