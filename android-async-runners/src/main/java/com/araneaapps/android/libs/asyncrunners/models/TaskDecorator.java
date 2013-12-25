@@ -24,12 +24,15 @@
 
 package com.araneaapps.android.libs.asyncrunners.models;
 
+import java.util.concurrent.Future;
+
 public class TaskDecorator {
 
   public static final String TAG = TaskDecorator.class.getSimpleName();
 
   private final Runnable runnable;
   private final RequestOptions options;
+  private Future<?> future;
 
   public TaskDecorator(Runnable runnable, RequestOptions options) {
     super();
@@ -38,6 +41,16 @@ public class TaskDecorator {
       this.options = options;
     } else {
       this.options = new RequestOptions.RequestOptionsBuilder().build();
+    }
+  }
+
+  public void setFuture(Future future) {
+    this.future = future;
+  }
+
+  public void cancelTask() {
+    if (this.future != null) {
+      future.cancel(true);
     }
   }
 

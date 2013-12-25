@@ -30,6 +30,8 @@ import com.araneaapps.android.libs.asyncrunners.models.TaskDecorator;
 import com.araneaapps.android.libs.asyncrunners.models.TaskStore;
 import com.araneaapps.android.libs.logger.ALog;
 
+import java.util.concurrent.Future;
+
 public class ExecutorService extends BaseObservableThreadPoolServiceService {
 
   @Override
@@ -43,14 +45,16 @@ public class ExecutorService extends BaseObservableThreadPoolServiceService {
       }
       RequestOptions options = task.getOptions();
       WorkerThread worker = new WorkerThread(task.getRunnable());
+      Future<?> future;
       if (options.shouldRunInSingleThread() == false) {
-        getFixedSizePoolExecutor().submit(
+         future = getFixedSizePoolExecutor().submit(
             worker, options.getPriority().ordinal());
       } else {
         // Handle according to options
-        getSingleThreadExecutorService().submit(
+        future = getSingleThreadExecutorService().submit(
             worker,options.getPriority().ordinal());
       }
+      task.setFuture(future);
     }
   }
 }
