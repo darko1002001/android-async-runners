@@ -24,41 +24,34 @@
 
 package com.araneaapps.android.libs.asyncrunners.models;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.atomic.AtomicLong;
 
-public class TaskDecorator {
+public class ComparableFutureTask<T> extends FutureTask<T>
+    implements Comparable<ComparableFutureTask<T>> {
 
-  public static final String TAG = TaskDecorator.class.getSimpleName();
+  volatile int priority = 0;
+  static final AtomicLong SEQUENCE_GENERATOR = new AtomicLong(0);
+  final long sequenceNumber;
 
-  private final Runnable runnable;
-  private final RequestOptions options;
-  private Future<?> future;
-  public TaskDecorator(Runnable runnable, RequestOptions options) {
-    super();
-    this.runnable = runnable;
-    if (options != null) {
-      this.options = options;
-    } else {
-      this.options = new RequestOptions.RequestOptionsBuilder().build();
-    }
+  public ComparableFutureTask(Runnable runnable, T result, int priority) {
+    super(runnable, result);
+    this.priority = priority;
+    sequenceNumber = SEQUENCE_GENERATOR.getAndIncrement();
   }
 
-  public void setFuture(Future future) {
-    this.future = future;
+  public ComparableFutureTask(Callable<T> callable, int priority) {
+    super(callable);
+    this.priority = priority;
+    sequenceNumber = SEQUENCE_GENERATOR.getAndIncrement();
   }
 
-  public void cancelTask() {
-    if (this.future != null) {
-      future.cancel(true);
-    }
+  @Override
+  public int compareTo(ComparableFutureTask<T> o) {
+    return o.priority > priority ? 1
+        : (o.priority < priority ? -1
+        : (sequenceNumber > o.sequenceNumber ? 1
+        : (sequenceNumber < o.sequenceNumber ? -1 : 0)));
   }
-
-  public Runnable getRunnable() {
-    return runnable;
-  }
-
-  public RequestOptions getOptions() {
-    return options;
-  }
-
 }
