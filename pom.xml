@@ -11,7 +11,7 @@
 
   <groupId>com.aranea-apps.android.libs</groupId>
   <artifactId>android-async-runners-parent</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Android Async Runners (Parent)</name>
@@ -41,7 +41,7 @@
     <url>http://github.com/darko1002001/android-async-runners/</url>
     <connection>scm:git:git://github.com/darko1002001/android-async-runners.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/darko1002001/android-async-runners.git</developerConnection>
-    <tag>android-async-runners-parent-1.0.1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
