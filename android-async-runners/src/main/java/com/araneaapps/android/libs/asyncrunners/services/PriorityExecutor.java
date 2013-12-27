@@ -26,7 +26,13 @@ package com.araneaapps.android.libs.asyncrunners.services;
 
 import com.araneaapps.android.libs.asyncrunners.models.ComparableFutureTask;
 
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class PriorityExecutor extends ThreadPoolExecutor {
 
