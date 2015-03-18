@@ -29,11 +29,11 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ComparableFutureTask<T> extends FutureTask<T>
-    implements Comparable<ComparableFutureTask<T>> {
+  implements Comparable<ComparableFutureTask<T>> {
 
-  volatile int priority = 0;
   static final AtomicLong SEQUENCE_GENERATOR = new AtomicLong(0);
   final long sequenceNumber;
+  volatile int priority = 0;
 
   public ComparableFutureTask(Runnable runnable, T result, int priority) {
     super(runnable, result);
@@ -50,8 +50,9 @@ public class ComparableFutureTask<T> extends FutureTask<T>
   @Override
   public int compareTo(ComparableFutureTask<T> o) {
     return o.priority > priority ? 1
-        : (o.priority < priority ? -1
-        : (sequenceNumber > o.sequenceNumber ? 1
-        : (sequenceNumber < o.sequenceNumber ? -1 : 0)));
+      : (o.priority < priority ? -1
+      : (sequenceNumber > o.sequenceNumber ? 1
+      : (sequenceNumber < o.sequenceNumber ? -1
+      : 0)));
   }
 }

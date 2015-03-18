@@ -25,10 +25,11 @@
 package com.araneaapps.android.libs.asyncrunners.services;
 
 import android.content.Intent;
+import android.util.Log;
+
 import com.araneaapps.android.libs.asyncrunners.models.RequestOptions;
 import com.araneaapps.android.libs.asyncrunners.models.TaskDecorator;
 import com.araneaapps.android.libs.asyncrunners.models.TaskStore;
-import com.araneaapps.android.libs.logger.ALog;
 
 import java.util.concurrent.Future;
 
@@ -40,7 +41,7 @@ public class ExecutorService extends BaseObservableThreadPoolServiceService {
     while (taskStore.hasTasks()) {
       TaskDecorator task = taskStore.poll();
       if (task == null) {
-        ALog.d(TAG, TaskDecorator.class.getSimpleName() + " is null");
+        Log.d(TAG, TaskDecorator.class.getSimpleName() + " is null");
         continue;
       }
       RequestOptions options = task.getOptions();
@@ -48,11 +49,11 @@ public class ExecutorService extends BaseObservableThreadPoolServiceService {
       Future<?> future;
       if (options.shouldRunInSingleThread()) {
         future = getSingleThreadExecutorService().submit(
-            worker, options.getPriority().ordinal());
+          worker, options.getPriority().ordinal());
 
       } else {
         future = getFixedSizePoolExecutor().submit(
-            worker, options.getPriority().ordinal());
+          worker, options.getPriority().ordinal());
       }
       task.setFuture(future);
     }

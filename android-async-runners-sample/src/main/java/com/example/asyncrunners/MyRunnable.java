@@ -24,9 +24,11 @@
 
 package com.example.asyncrunners;
 
-import com.araneaapps.android.libs.logger.ALog;
+
+import android.util.Log;
 
 public class MyRunnable implements Runnable {
+  private static final String TAG = MyRunnable.class.getSimpleName();
   private final int i;
 
   public MyRunnable(int i) {
@@ -35,11 +37,11 @@ public class MyRunnable implements Runnable {
 
   @Override
   public void run() {
-    ALog.e("Task " + i);
+    Log.e(TAG, "Task " + i);
     try {
       Thread.sleep(3000);
     } catch (InterruptedException e) {
-      ALog.v(e.getMessage());
+      Log.v(TAG, e.getMessage());
     }
 
   }

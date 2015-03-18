@@ -36,8 +36,10 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class AsyncRunnersTest {
-  @Before @After // Clear out cache of injectors and resetters before and after each test.
-  @Test public void dummyMethodTest() {
+  @Before
+  @After // Clear out cache of injectors and resetters before and after each test.
+  @Test
+  public void dummyMethodTest() {
     assertThat(true).isEqualTo(true);
   }
 

@@ -28,13 +28,13 @@ import com.araneaapps.android.libs.asyncrunners.enums.DownloadPriority;
 
 public class RequestOptions {
 
+  private boolean runInSingleThread;
+  private DownloadPriority priority;
+
   private RequestOptions(boolean runInSingleThread, DownloadPriority priority) {
     this.runInSingleThread = runInSingleThread;
     this.priority = priority;
   }
-
-  private boolean runInSingleThread;
-  private DownloadPriority priority;
 
   public boolean shouldRunInSingleThread() {
     return runInSingleThread;

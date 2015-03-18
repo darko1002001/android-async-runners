@@ -8,7 +8,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(RobolectricTestRunner.class)
 public class SimpleActivityTest {
-  @Test public void verifyContentViewInjection() {
+  @Test
+  public void verifyContentViewInjection() {
     assertThat(true).isEqualTo(true);
   }
 }

@@ -30,7 +30,7 @@ package com.araneaapps.android.libs.asyncrunners.services;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import com.araneaapps.android.libs.logger.ALog;
+import android.util.Log;
 
 import java.util.concurrent.TimeUnit;
 
@@ -38,10 +38,10 @@ import java.util.concurrent.TimeUnit;
  * @author darko.grozdanovski
  */
 public abstract class BaseObservableThreadPoolServiceService extends
-    BaseThreadPoolService {
+  BaseThreadPoolService {
 
   public static final String TAG = BaseObservableThreadPoolServiceService.class
-      .getSimpleName();
+    .getSimpleName();
 
   /**
    * Use to shut down the service when done, register the worker when its
@@ -54,7 +54,7 @@ public abstract class BaseObservableThreadPoolServiceService extends
 
       @Override
       public void run() {
-        ALog.d("Shutting down " + TAG);
+        Log.d(TAG, "Shutting down " + TAG);
         stopSelf();
       }
     };

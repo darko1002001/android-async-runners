@@ -26,8 +26,9 @@ package com.araneaapps.android.libs.asyncrunners.models;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+
 import com.araneaapps.android.libs.asyncrunners.services.ExecutorService;
-import com.araneaapps.android.libs.logger.ALog;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -41,8 +42,8 @@ public class TaskStore {
 
   private static Queue<TaskDecorator> queue = new ConcurrentLinkedQueue<TaskDecorator>();
   private static Class<?> executorServiceClass = ExecutorService.class;
-  private final Context context;
   private static TaskStore instance;
+  private final Context context;
 
   private TaskStore(final Context context) {
     this.context = context;
@@ -50,8 +51,8 @@ public class TaskStore {
 
   public static TaskStore get(final Context context) {
     if (instance == null) {
-      ALog.e("USE THE APPLICATION CLASS AND CALL " + TAG
-          + ".init(context) to wire the singleton to the App Class loader");
+      Log.e(TaskStore.class.getSimpleName(), "USE THE APPLICATION CLASS AND CALL " + TAG
+        + ".init(context) to wire the singleton to the App Class loader");
       instance = new TaskStore(context.getApplicationContext());
     }
     return instance;
@@ -97,8 +98,8 @@ public class TaskStore {
   public TaskDecorator queue(final Runnable runnable, RequestOptions options) {
     if (executorServiceClass == null) {
       throw new RuntimeException(
-          "Initialize the Executor service class in a class extending application by calling "
-              + AsyncRunners.class.getSimpleName() + ".init(context)");
+        "Initialize the Executor service class in a class extending application by calling "
+          + AsyncRunners.class.getSimpleName() + ".init(context)");
     }
     final Intent service = new Intent(context, executorServiceClass);
     final TaskDecorator wrapper = new TaskDecorator(runnable, options);

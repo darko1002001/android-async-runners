@@ -30,7 +30,7 @@ package com.araneaapps.android.libs.asyncrunners.services;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import com.araneaapps.android.libs.logger.ALog;
+import android.util.Log;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -39,13 +39,11 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public abstract class BaseThreadPoolService extends Service {
 
+  public static final String TAG = BaseThreadPoolService.class.getSimpleName();
   /**
    * the number of objects that will be executed simultaniously
    */
   private static final int CORE_POOL_SIZE = 3;
-
-  public static final String TAG = BaseThreadPoolService.class.getSimpleName();
-
   private PriorityExecutor fixedSizePoolExecutor;
   private PriorityExecutor singleThreadExecutorService;
 
@@ -59,7 +57,7 @@ public abstract class BaseThreadPoolService extends Service {
     try {
       service.shutdown();
     } catch (Exception e) {
-      ALog.v(e.getMessage());
+      Log.v(TAG, e.getMessage());
     }
   }
 

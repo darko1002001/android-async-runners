@@ -44,7 +44,7 @@ public class PriorityExecutor extends ThreadPoolExecutor {
 
   public static PriorityExecutor newFixedThreadPool(int nThreads) {
     return new PriorityExecutor(nThreads, nThreads, 60L,
-        TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>());
+      TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>());
   }
   //Submit with New comparable task
 

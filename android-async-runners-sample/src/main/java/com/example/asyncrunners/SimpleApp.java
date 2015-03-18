@@ -1,6 +1,7 @@
 package com.example.asyncrunners;
 
 import android.app.Application;
+
 import com.araneaapps.android.libs.asyncrunners.models.AsyncRunners;
 
 public class SimpleApp extends Application {

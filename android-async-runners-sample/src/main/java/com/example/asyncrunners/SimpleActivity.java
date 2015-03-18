@@ -2,6 +2,7 @@ package com.example.asyncrunners;
 
 import android.app.Activity;
 import android.os.Bundle;
+
 import com.araneaapps.android.libs.asyncrunners.enums.DownloadPriority;
 import com.araneaapps.android.libs.asyncrunners.models.RequestOptions;
 import com.araneaapps.android.libs.asyncrunners.models.TaskStore;
@@ -14,19 +15,19 @@ public class SimpleActivity extends Activity {
 
     for (int i = 1; i < 10; i++) {
       TaskStore.get(this).queue(new MyRunnable(i), new RequestOptions.RequestOptionsBuilder().
-          setPriority(DownloadPriority.NORMAL).
-          setRunInSingleThread(true).build());
+        setPriority(DownloadPriority.NORMAL).
+        setRunInSingleThread(true).build());
     }
 
     for (int i = 10; i < 20; i++) {
       TaskStore.get(this).queue(new MyRunnable(i), new RequestOptions.RequestOptionsBuilder().
-          setPriority(DownloadPriority.CRITICAL).
-          setRunInSingleThread(true).build());
+        setPriority(DownloadPriority.CRITICAL).
+        setRunInSingleThread(true).build());
     }
 
     TaskStore.get(this).queue(new MyRunnable(1), new RequestOptions.RequestOptionsBuilder().
-        setPriority(DownloadPriority.NORMAL).
-        setRunInSingleThread(false).build());
+      setPriority(DownloadPriority.NORMAL).
+      setRunInSingleThread(false).build());
   }
 
 }
